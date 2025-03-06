@@ -19,13 +19,20 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      // Get all users except current user
-      const allUsers = getUsers().filter(u => u.id !== user.id);
-      setUsers(allUsers);
-      
-      // Get friends and friend requests
-      setFriends(getFriends(user.id));
-      setFriendRequests(getFriendRequests(user.id));
+      // Initial load
+      const loadUsers = () => {
+        const allUsers = getUsers().filter(u => u.id !== user.id);
+        setUsers(allUsers);
+        setFriends(getFriends(user.id));
+        setFriendRequests(getFriendRequests(user.id));
+      };
+
+      loadUsers();
+
+      // Set up polling every 5 seconds
+      const interval = setInterval(loadUsers, 5000);
+
+      return () => clearInterval(interval);
     }
   }, [user]);
 
@@ -66,13 +73,13 @@ const Chat: React.FC = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <Header />
       
-      <div className="flex-1 flex container mx-auto p-4 mt-4">
+      <div className="flex-1 flex flex-col sm:flex-row container mx-auto p-4 mt-4">
         {/* Users list */}
-        <div className="w-1/4 bg-white rounded-lg shadow-md overflow-hidden mr-4">
+        <div className="w-full sm:w-1/4 bg-white rounded-lg shadow-md overflow-hidden mb-4 sm:mb-0 sm:mr-4">
           <div className="p-4 bg-blue-600 text-white font-medium text-lg">
             Usuários
           </div>
-          <div className="overflow-y-auto h-[calc(100vh-180px)]">
+          <div className="overflow-y-auto max-h-[300px] sm:h-[calc(100vh-180px)]">
             {users.length === 0 ? (
               <p className="p-4 text-gray-500">Nenhum usuário encontrado</p>
             ) : (
@@ -82,7 +89,7 @@ const Chat: React.FC = () => {
                     key={u.id}
                     className={`p-3 border-b hover:bg-gray-100 ${selectedUser?.id === u.id ? 'bg-blue-50' : ''}`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                       <div 
                         className="flex items-center cursor-pointer"
                         onClick={() => setSelectedUser(u)}
@@ -90,7 +97,7 @@ const Chat: React.FC = () => {
                         <div className={`w-2 h-2 rounded-full mr-2 ${u.online ? 'bg-green-500' : 'bg-gray-400'}`} />
                         <span className="text-sm">{u.username}</span>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-wrap">
                         {friends.includes(u.id) ? (
                           <span className="text-xs text-green-600 px-2 py-1 bg-green-100 rounded">Amigo</span>
                         ) : friendRequests.outgoing.includes(u.id) ? (
