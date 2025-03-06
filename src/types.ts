@@ -3,6 +3,8 @@ export interface User {
   username: string;
   email?: string;
   profilePhoto?: string;
+  online?: boolean;
+  isVisible?: boolean;
   friends?: string[]; // Array of user IDs who are friends
   friendRequests?: {
     incoming: string[]; // Array of user IDs who sent friend requests

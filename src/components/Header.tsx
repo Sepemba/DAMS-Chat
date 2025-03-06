@@ -1,7 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Users, User as UserIcon, LogOut } from 'lucide-react';
+import { MessageSquare, Users, User as UserIcon, LogOut, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { updateUserVisibility } from '../utils/storage';
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
@@ -10,6 +11,12 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleVisibility = () => {
+    if (user) {
+      updateUserVisibility(user.id, !user.isVisible);
+    }
   };
 
   return (
@@ -41,6 +48,14 @@ const Header: React.FC = () => {
             >
               <UserIcon size={20} />
               <span>Perfil</span>
+            </button>
+
+            <button
+              onClick={toggleVisibility}
+              className="flex items-center space-x-1 hover:bg-blue-700 p-2 rounded-md"
+              title={user.isVisible ? 'Ficar invisível' : 'Ficar visível'}
+            >
+              {user.isVisible ? <Eye size={20} /> : <EyeOff size={20} />}
             </button>
             
             <button 

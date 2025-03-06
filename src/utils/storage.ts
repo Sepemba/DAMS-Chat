@@ -299,3 +299,59 @@ export const commentOnPost = (postId: string, userId: string, content: string): 
   
   localStorage.setItem(POSTS_KEY, JSON.stringify(updatedPosts));
 };
+
+export const updateUserOnlineStatus = (userId: string, online: boolean): User | null => {
+  const users = getUsers();
+  const userIndex = users.findIndex(u => u.id === userId);
+  
+  if (userIndex === -1) return null;
+  
+  // Update user in the users array
+  users[userIndex] = {
+    ...users[userIndex],
+    online
+  };
+  
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  
+  // If this is the current user, update current user as well
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.id === userId) {
+    const updatedCurrentUser = {
+      ...currentUser,
+      online
+    };
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedCurrentUser));
+    return updatedCurrentUser;
+  }
+  
+  return users[userIndex];
+};
+
+export const updateUserVisibility = (userId: string, isVisible: boolean): User | null => {
+  const users = getUsers();
+  const userIndex = users.findIndex(u => u.id === userId);
+  
+  if (userIndex === -1) return null;
+  
+  // Update user in the users array
+  users[userIndex] = {
+    ...users[userIndex],
+    isVisible
+  };
+  
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  
+  // If this is the current user, update current user as well
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.id === userId) {
+    const updatedCurrentUser = {
+      ...currentUser,
+      isVisible
+    };
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedCurrentUser));
+    return updatedCurrentUser;
+  }
+  
+  return users[userIndex];
+};
