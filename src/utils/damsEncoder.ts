@@ -111,21 +111,34 @@ function encodeChar(char: string): string {
   
   let encoded = '';
   
+  // Get NOL based on character
+  let nol = 1;
+  const lowerChar = char.toLowerCase();
+  
+  // Special NOL values for specific characters
+  if (lowerChar === 'a') nol = 3;
+  else if (lowerChar === 'q') nol = 2;
+  else if (lowerChar === 'z') nol = 2;
+  else if (lowerChar === 't') nol = 3;
+  else if (lowerChar === 'c') nol = 4;
+  else if (lowerChar === 'u') nol = 2;
+  else if (lowerChar === 'y') nol = 3;
+  
   if (isUpperCase) {
     if (hasAccent) {
       // Maiúscula acentuada: NUDAL|NOL NOL NAC
-      encoded = `${nudal}|11${getNAC(char)}`;
+      encoded = `${nudal}|${nol}${nol}${getNAC(char)}`;
     } else {
       // Maiúscula: NUDAL|NOL NOL
-      encoded = `${nudal}|11`;
+      encoded = `${nudal}|${nol}${nol}`;
     }
   } else {
     if (hasAccent) {
       // Minúscula acentuada: NOL|NUDAL NUSEP NAC
-      encoded = `1|${nudal}0${getNAC(char)}`;
+      encoded = `${nol}|${nudal}0${getNAC(char)}`;
     } else {
       // Minúscula: NOL|NUDAL
-      encoded = `1|${nudal}`;
+      encoded = `${nol}|${nudal}`;
     }
   }
   
